@@ -58,7 +58,7 @@ def unpack_note(
         return {"relative_path": "unknown", "error": "not_a_file"}
 
     rel_path = note_path.relative_to(vault_root).as_posix()
-    
+
     # Fast stats
     row_match = note_metadata_df[note_metadata_df["abs_filepath"] == abs_filepath]
     base_stats = {}
@@ -68,25 +68,35 @@ def unpack_note(
             "rel_filepath": row["rel_filepath"],
             "note_exists": bool(row["note_exists"]),
             "n_backlinks": int(row["n_backlinks"]),
-            "n_wikilinks": int(row["n_wikilinks"]) if pd.notna(row["n_wikilinks"]) else 0,
+            "n_wikilinks": int(row["n_wikilinks"])
+            if pd.notna(row["n_wikilinks"])
+            else 0,
             "n_tags": int(row["n_tags"]) if pd.notna(row["n_tags"]) else 0,
-            "n_embedded_files": int(row["n_embedded_files"]) if pd.notna(row["n_embedded_files"]) else 0,
-            "modified_time_iso": row["modified_time"].isoformat() if pd.notna(row["modified_time"]) else None,
+            "n_embedded_files": int(row["n_embedded_files"])
+            if pd.notna(row["n_embedded_files"])
+            else 0,
+            "modified_time_iso": row["modified_time"].isoformat()
+            if pd.notna(row["modified_time"])
+            else None,
         }
 
     # Rich getters
     getters_data: Dict[str, Any] = {}
     try:
-        getters_data.update({
-            "name": note_path.stem,
-            "raw_content": vault.get_source_text(note_path.stem),
-            "clean_body": vault.get_readable_text(note_path.stem),
-            "frontmatter": vault.get_front_matter(note_path.stem),
-            "tags": vault.get_tags(note_path.stem),
-            "backlinks": list(vault.get_backlinks(note_path.stem)),
-        })
+        getters_data.update(
+            {
+                "name": note_path.stem,
+                "raw_content": vault.get_source_text(note_path.stem),
+                "clean_body": vault.get_readable_text(note_path.stem),
+                "frontmatter": vault.get_front_matter(note_path.stem),
+                "tags": vault.get_tags(note_path.stem),
+                "backlinks": list(vault.get_backlinks(note_path.stem)),
+            }
+        )
         if hasattr(vault, "get_embedded_files"):
-            getters_data["embedded_files"] = list(vault.get_embedded_files(note_path.stem))
+            getters_data["embedded_files"] = list(
+                vault.get_embedded_files(note_path.stem)
+            )
         if hasattr(vault, "get_md_links"):
             getters_data["outgoing_md_links"] = list(vault.get_md_links(note_path.stem))
     except Exception as e:
@@ -94,7 +104,8 @@ def unpack_note(
 
     # Derived
     derived = {
-        "is_isolated": base_stats.get("n_backlinks", 0) == 0 and base_stats.get("n_wikilinks", 0) == 0,
+        "is_isolated": base_stats.get("n_backlinks", 0) == 0
+        and base_stats.get("n_wikilinks", 0) == 0,
         "approx_word_count": len(getters_data.get("clean_body", "").split()),
         "has_frontmatter": bool(getters_data.get("frontmatter", {})),
         "last_modified": base_stats.get("modified_time_iso"),
@@ -119,13 +130,10 @@ def load_vault(vault_path: Path) -> List[Dict]:
     file_paths: List = note_metadata_df["abs_filepath"].copy().to_list()
     note_metadata_df["abs_filepath"] = note_metadata_df["abs_filepath"].astype(str)
     note_metadata_df["rel_filepath"] = note_metadata_df["rel_filepath"].astype(str)
-    for i in range(len(file_paths)):
-        print(file_paths[i])
-    print(f"Vault loaded – {len(vault.md_file_index)} notes detected")
 
     all_notes_data = []
     for note_path_str in vault.md_file_index.values():
-        abs_path = str(vault_path/note_path_str)
+        abs_path = str(vault_path / note_path_str)
         try:
             data = unpack_note(vault, abs_path, vault_path, note_metadata_df)
             all_notes_data.append(data)
@@ -139,11 +147,13 @@ def load_vault(vault_path: Path) -> List[Dict]:
 
 # Example usage
 if __name__ == "__main__":
-    vault_dir = Path("/home/drithird/GenericProjects/ObsidianNotesAgent/data/test_vault/kepano-obsidian-main")
+    vault_dir = Path(
+        "/home/drithird/GenericProjects/ObsidianNotesAgent/data/test_vault/kepano-obsidian-main"
+    )
     try:
         notes = load_vault(vault_dir)
         # Now you have list of dicts → ready for LangChain
         print(f"First note keys: {list(notes[0].keys()) if notes else 'No notes'}")
-        yum = 1+1
+        yum = 1 + 1
     except Exception as e:
         print(f"Vault loading failed: {e}")
