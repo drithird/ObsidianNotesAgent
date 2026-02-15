@@ -4,26 +4,21 @@ version = "0.1.0"
 description = "Add your description here"
 readme = "README.md"
 requires-python = ">=3.13"
+dependencies = [
+  "langchain>=0.3",
+  "langchain-community",
+  "langchain-ollama",
+  "chromadb",
+  "unstructured",
+  "obsidiantools>=0.11.0",
+]
 
 [build-system]
 requires = ["hatchling"]
-build-backend="hatchling.build"
+build-backend = "hatchling.build"
 
-dependencies = [
-    "chromadb>=1.5.0",
-    "langchain>=1.2.10",
-    "langchain-chroma>=1.1.0",
-    "langchain-ollama>=1.0.1",
-    "langgraph>=1.0.8",
-    "textual>=7.5.0",
-]
 [project.optional-dependencies]
-dev = [
-  "pytest>=8.0",
-  "pytest-cov"
-]
-
-[tool.uv]
+dev = ["pytest>=8.0", "pytest-cov"]
 
 [tool.hatch.build.targets.wheel]
 packages = ["src/noteagent"]
