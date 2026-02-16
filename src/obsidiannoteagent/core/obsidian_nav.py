@@ -1,9 +1,6 @@
 from pathlib import Path
 from typing import List, Dict, Any
 
-from annotated_types import doc
-from langchain_core import documents
-from langchain_core.documents import Document
 from langchain_text_splitters import RecursiveCharacterTextSplitter
 from langchain_ollama import OllamaEmbeddings
 from langchain_chroma import Chroma

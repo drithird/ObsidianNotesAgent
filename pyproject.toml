@@ -1,5 +1,5 @@
 [project]
-name = "noteagent"
+name = "obsidiannoteagent"
 version = "0.1.0"
 description = "Add your description here"
 readme = "README.md"
@@ -23,3 +23,6 @@ dev = ["pytest>=8.0", "pytest-cov"]
 
 [tool.hatch.build.targets.wheel]
 packages = ["src/noteagent"]
+
+[tool.ruff]
+line-length = 150
